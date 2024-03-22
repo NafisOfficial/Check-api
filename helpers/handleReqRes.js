@@ -25,8 +25,10 @@ handler.handleReqRes = (req, res) => {
 
     const chosenHandler = routes[trimedPath] ? routes[trimedPath] : notFoundHandler;
 
+    // todos:: set status code and payload
+
     chosenHandler(requestProperties,(statusCode,payload)=>{
-        
+
     });
 
     const decoder = new StringDecoder('utf-8');
