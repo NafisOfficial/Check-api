@@ -1,7 +1,10 @@
 const routesHandler = {};
 
-routesHandler.sampleHandler=()=>{
-    console.log("Test sampleHandler is ok");
-}
+routesHandler.sampleHandler=(requestProperties, callback)=>{
 
+    console.log(requestProperties);
+    callback(200, {
+        message: "Sample handler is running"
+    })
+}
 module.exports = routesHandler;

@@ -23,23 +23,30 @@ handler.handleReqRes = (req, res) => {
         headers
     }
 
-    const chosenHandler = routes[trimedPath] ? routes[trimedPath] : notFoundHandler;
+    const chosenHandler = routes[trimedPath] ? routes[trimedPath] : notFoundHandler.notFound;
 
-    // todos:: set status code and payload
-
-    chosenHandler(requestProperties,(statusCode,payload)=>{
-
-    });
+    
 
     const decoder = new StringDecoder('utf-8');
     let realData = '';
     req.on('data',(buffer)=>{
      realData += decoder.write(buffer);
     });
+
+
     req.on('end',()=>{
      realData += decoder.end();
+
+     chosenHandler(requestProperties,(statusCode,payload)=>{
+        statusCode = typeof statusCode === 'number' ? statusCode : 500;
+        payload = typeof payload === 'object' ? payload : {};
+        const payloadString = JSON.stringify(payload);
+        res.writeHead(statusCode);
+        res.end(payloadString);
+    });
+
      res.end(realData)
-    })
+    });
     
  };
 

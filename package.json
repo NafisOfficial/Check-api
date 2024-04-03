@@ -1,10 +1,11 @@
 {
   "name": "node-js-learn",
   "version": "1.0.0",
-  "description": "parcticing node js",
+  "description": "practising node js",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index",
+    "start": "NODE_ENV=developerMode nodemon index",
+    "production": "NODE_ENV=production nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Md Nafis Iqbal",
