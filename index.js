@@ -7,7 +7,9 @@ const http = require("http");
 const {handleReqRes} = require('./helpers/handleReqRes');
 const environment = require('./helpers/environments');
 
+
 const app = {};
+
 
 
 app.createServer = () => {
@@ -16,7 +18,5 @@ app.createServer = () => {
     console.log(`Server is running on port ${environment.port} && mode : ${environment.envName}`);
   });
 };
-
-
 
 app.createServer();
