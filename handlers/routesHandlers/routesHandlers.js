@@ -1,9 +1,9 @@
-const routesHandler = {};
+const handler = {};
 
-routesHandler.sampleHandler=(requestProperties, callback)=>{
+handler.sampleHandler = (requestProperties, callback) => {
 
     callback(200, {
         message: "Sample handler is running"
     })
 }
-module.exports = routesHandler;
+module.exports = handler;

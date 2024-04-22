@@ -4,7 +4,7 @@
 // Type : Ideal Server Creation using raw node
 
 const http = require("http");
-const {handleReqRes} = require('./helpers/handleReqRes');
+const { handleReqRes } = require('./helpers/handleReqRes');
 const environment = require('./helpers/environments');
 
 

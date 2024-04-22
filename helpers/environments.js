@@ -3,12 +3,14 @@ const environments = {};
 
 environments.dev = {
     port: 3000,
-    envName: "developerMode"
+    envName: "developerMode",
+    secretKey: "iLoveDevSecretKeyasdfghjkl"
 }
 
 environments.production = {
     port: 5000,
-    envName: "production"
+    envName: "production",
+    secretKey: "iLoveProductionSecretKeyqwertyuiop"
 }
 
 //determine which environment was pass
