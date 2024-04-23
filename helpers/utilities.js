@@ -33,5 +33,10 @@ utilities.hashPassword = (passwordString) => {
     }
 }
 
+//create random string
+utilities.createRandomString = (stringLength) => {
+    return 'kjalfjladfjkhlajfdlkjlkafj';
+}
+
 
 module.exports = utilities;
