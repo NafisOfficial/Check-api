@@ -30,7 +30,23 @@ handler.tokenHandler = (requestProperties, callback) => {
 handler._token = {};
 
 handler._token.get = (requestProperties, callback) => {
-
+    const id = typeof (requestProperties.queryStringObject.id) === "string" && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
+    if (id) {
+        lib.read('tokens', id, (err, t) => {
+            const token = parseJSON(t);
+            if (err) {
+                callback(404, {
+                    error: "token was not found"
+                })
+            } else {
+                callback(200, token)
+            }
+        })
+    } else {
+        callback(404, {
+            error: "invalid id number !"
+        })
+    }
 }
 
 handler._token.post = (requestProperties, callback) => {
