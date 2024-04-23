@@ -91,10 +91,72 @@ handler._token.post = (requestProperties, callback) => {
 
 handler._token.put = (requestProperties, callback) => {
 
+    const id = typeof (requestProperties.body.id) === "string" && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id : false;
+    const isExtend = typeof (requestProperties.body.isExtend) === "boolean" && requestProperties.body.isExtend === true ? true : false;
+
+    if (id && isExtend) {
+        lib.read('tokens', id, (err, Token) => {
+            if (err) {
+                callback(404, {
+                    error: "token was not found !"
+                })
+            } else {
+                const userToken = parseJSON(Token);
+                if(userToken.expires<Date.now()){
+                    callback(400,{
+                        error: "token already expired"
+                    })
+                }else{
+                    userToken.expires = Date.now() + 60 * 60 * 1000;
+                    lib.update("tokens", id, userToken, (err) => {
+                        if (err) {
+                            callback(400, {
+                                error: "failed to update token !"
+                            })
+                        } else {
+                            callback(200, {
+                                message: "token updated successfully !"
+                            })
+                        }
+                    })
+                }
+            }
+        })
+    } else {
+        callback(400, {
+            error: "Please enter valid id and confirm !"
+        })
+    }
+
 }
 
 handler._token.delete = (requestProperties, callback) => {
-
+    const id = typeof (requestProperties.queryStringObject.id) === "string" && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
+    if (id) {
+        lib.read('tokens', id, (err, token) => {
+            if (err && !token) {
+                callback(404, {
+                    error: "token was not found"
+                })
+            } else {
+                lib.delete("tokens", id, (err) => {
+                    if (err) {
+                        callback(202, {
+                            message: "logout successful"
+                        })
+                    } else {
+                        callback(500, {
+                            error: "failed to delete"
+                        })
+                    }
+                })
+            }
+        })
+    } else {
+        callback(500, {
+            error: "Invalid token id."
+        })
+    }
 }
 
 
