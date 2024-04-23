@@ -102,11 +102,11 @@ handler._token.put = (requestProperties, callback) => {
                 })
             } else {
                 const userToken = parseJSON(Token);
-                if(userToken.expires<Date.now()){
-                    callback(400,{
+                if (userToken.expires < Date.now()) {
+                    callback(400, {
                         error: "token already expired"
                     })
-                }else{
+                } else {
                     userToken.expires = Date.now() + 60 * 60 * 1000;
                     lib.update("tokens", id, userToken, (err) => {
                         if (err) {
@@ -157,6 +157,21 @@ handler._token.delete = (requestProperties, callback) => {
             error: "Invalid token id."
         })
     }
+}
+
+handler._token.verify = (id, phone, callback) => {
+    lib.read('tokens', id, (error, token) => {
+        if (error && !token) {
+            callback(false);
+        } else {
+            const tokenObject = parseJSON(token);
+            if (tokenObject.phone === phone && tokenObject.expires > Date.now()) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        }
+    });
 }
 
 

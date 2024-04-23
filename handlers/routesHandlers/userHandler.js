@@ -1,6 +1,7 @@
 const lib = require('../../lib/data');
 const { hashPassword } = require('../../helpers/utilities');
-const { parseJSON } = require('../../helpers/utilities')
+const { parseJSON } = require('../../helpers/utilities');
+const tokenHandler = require('./tokenHandler');
 
 const handler = {};
 
@@ -23,17 +24,32 @@ handler._users = {};
 handler._users.get = (requestProperties, callback) => {
     const phone = typeof (requestProperties.queryStringObject.phone) === "string" && requestProperties.queryStringObject.phone.trim().length === 11 ? requestProperties.queryStringObject.phone : false;
     if (phone) {
-        lib.read('users', phone, (err, u) => {
-            const user = parseJSON(u);
-            delete user.password;
-            if (err) {
-                callback(404, {
-                    error: "user not found"
-                })
-            } else {
-                callback(200, user)
-            }
-        })
+        const tokenId = typeof (requestProperties.headers.tokenid) === "string" && requestProperties.headers.tokenid.trim().length === 20 ? requestProperties.headers.tokenid : false;
+        if(tokenId){
+            tokenHandler._token.verify(tokenId,phone,(token)=>{
+                if(token){
+                    lib.read('users', phone, (err, u) => {
+                        const user = parseJSON(u);
+                        delete user.password;
+                        if (err) {
+                            callback(404, {
+                                error: "user not found"
+                            })
+                        } else {
+                            callback(200, user)
+                        }
+                    })
+                }else{
+                    callback(403,{
+                        error: "unauthenticated user 2!"
+                    })
+                }
+            });
+        }else{
+            callback(403,{
+                error: "unauthenticated user 1!"
+            });
+        }
     } else {
         callback(404, {
             error: "invalid phone number !"
