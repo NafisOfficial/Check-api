@@ -34,8 +34,10 @@ handler._token.get = (requestProperties, callback) => {
 }
 
 handler._token.post = (requestProperties, callback) => {
+
     const phone = typeof (requestProperties.body.phone) === "string" && requestProperties.body.phone.trim().length === 11 ? requestProperties.body.phone : false;
     const password = typeof (requestProperties.body.password) === "string" && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password : false;
+
     lib.read('users', phone, (err, data) => {
         if (err) {
             callback(400, {
@@ -43,7 +45,7 @@ handler._token.post = (requestProperties, callback) => {
             })
         } else {
             let Password = hashPassword(password);
-            if (data.password === Password) {
+            if (parseJSON(data).password === Password) {
                 let tokenId = createRandomString(20);
                 let expires = Date.now() + 60 * 60 * 1000;
                 const tokenObject = {
@@ -53,19 +55,17 @@ handler._token.post = (requestProperties, callback) => {
                 }
 
                 // store the token 
-                lib.create('tokens',tokenId,tokenObject,(error)=>{
-                    if(error){
-                        callback(400,{
+                lib.create('tokens', tokenId, tokenObject, (error) => {
+                    if (error) {
+                        callback(500, {
                             error: "there was a problem in your request !"
                         })
-                    }else{
-                        callback(200,{
-                            message: "successfully token created !"
-                        })
+                    } else {
+                        callback(200, tokenObject);
                     }
                 })
-            }else{
-                callback(400,{
+            } else {
+                callback(400, {
                     error: "phone number or password is not correct !"
                 })
             }

@@ -35,7 +35,14 @@ utilities.hashPassword = (passwordString) => {
 
 //create random string
 utilities.createRandomString = (stringLength) => {
-    return 'kjalfjladfjkhlajfdlkjlkafj';
+    let length = stringLength;
+    const possiableCharacter = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let output = "";
+    for(i=0;i<length;i++){
+        const randomCharacter = possiableCharacter.charAt(Math.floor(Math.random() * possiableCharacter.length));
+        output+=randomCharacter;
+    }
+    return output;
 }
 
 
