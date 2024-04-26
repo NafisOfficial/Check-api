@@ -187,29 +187,29 @@ handler._check.put = (requestProperties, callback) => {
                     // verify the user
                     tokenHandler._token.verify(tokenId, checkData.userPhone, (verifiedUser) => {
                         if (verifiedUser) {
-                            if(protocol){
+                            if (protocol) {
                                 checkData.protocol = protocol;
                             }
-                            if(url){
+                            if (url) {
                                 checkData.url = url;
                             }
-                            if(method){
+                            if (method) {
                                 checkData.method = method;
                             }
-                            if(successCode){
+                            if (successCode) {
                                 checkData.successCode = successCode;
                             }
-                            if(timeOutSeconds){
+                            if (timeOutSeconds) {
                                 checkData.timeOutSeconds = timeOutSeconds;
                             }
                             //update the data
-                            lib.update('checks',checkId,checkData,(error)=>{
-                                if(!error){
-                                    callback(200,{
+                            lib.update('checks', checkId, checkData, (error) => {
+                                if (!error) {
+                                    callback(200, {
                                         message: "successfully updated checks !"
                                     })
-                                }else{
-                                    callback(500,{
+                                } else {
+                                    callback(500, {
                                         error: "failed to update the checks !"
                                     })
                                 }
@@ -234,7 +234,78 @@ handler._check.put = (requestProperties, callback) => {
     }
 }
 handler._check.delete = (requestProperties, callback) => {
+    const checkId = typeof (requestProperties.body.id) === "string" && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id : false;
+    if (checkId) {
+        lib.read('checks', checkId, (error, check) => {
+            if (error && !check) {
+                callback(500, {
+                    error: "there was a problem in server side !"
+                })
+            } else {
+                const checkData = parseJSON(check);
+                const userPhone = checkData.userPhone;
+                //verify the user
+                const tokenId = typeof (requestProperties.headers.tokenid) === "string" && requestProperties.headers.tokenid.trim().length === 20 ? requestProperties.headers.tokenid : false;
+                // verify the user
+                tokenHandler._token.verify(tokenId, userPhone, (verifiedUser) => {
+                    if (verifiedUser) {
+                        lib.delete('checks',checkId,(error)=>{
+                            if(!error){
+                                callback(500,{
+                                    error: "failed to delete check !"
+                                })
+                            }else{
+                                lib.read('users',userPhone,(error,user)=>{
+                                    if(error && !user){
+                                        callback(500,{
+                                            error: "there was an problem in server 4!"
+                                        })
+                                    }else{
+                                        const userData = parseJSON(user);
+                                        const userChecks = typeof(userData.checks) === 'object' && userData.checks instanceof Array ? true : false;
+                                        if(userChecks){
+                                            userChecksIndex = userData.checks.indexOf(checkId);
+                                            if(userChecksIndex>-1){
+                                                userData.checks.splice(userChecksIndex,1)
+                                                lib.update('users',userPhone,userData,(error)=>{
+                                                    if(error){
+                                                        callback(500,{
+                                                            error: "there was an error in server 2!"
+                                                        })
+                                                    }else{
+                                                        callback(500,{
+                                                            message: "successfully delete checks!"
+                                                        })
+                                                    }
+                                                })
+                                            }else{
+                                                callback(500,{
+                                                    error: "there was a problem in server 1"
+                                                })
+                                            }
+                                        }else{
+                                            callback(500,{
+                                                error: "there was an problem in server. 3"
+                                            })
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    } else {
+                        callback(403, {
+                            error: "user is not valid !"
+                        })
+                    }
+                })
+            }
+        })
 
+    } else {
+        callback(500, {
+            error: "Invalid check id."
+        })
+    }
 }
 
 
