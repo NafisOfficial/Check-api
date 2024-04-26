@@ -162,7 +162,7 @@ handler._check.post = (requestProperties, callback) => {
 
 }
 handler._check.put = (requestProperties, callback) => {
-    const checkId = typeof (requestProperties.queryStringObject.id) === "string" && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
+    const checkId = typeof (requestProperties.body.id) === "string" && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id : false;
 
     const protocol = typeof (requestProperties.body.protocol) === "string" && ["http", "https"].indexOf(requestProperties.body.protocol) > -1 ? requestProperties.body.protocol : false;
 
