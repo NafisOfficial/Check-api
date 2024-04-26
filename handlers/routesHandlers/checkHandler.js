@@ -25,7 +25,35 @@ handler.checkHandler = (requestProperties, callback) => {
 handler._check = {};
 
 handler._check.get = (requestProperties, callback) => {
+    const checkId = typeof (requestProperties.queryStringObject.id) === "string" && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
+    if(checkId){
+        // read the checks and verify token and send checks data to the user
+        lib.read("checks",checkId,(error,check)=>{
+            if(error && !check){
+                callback(500,{
+                    error: "there was an error in server !"
+                });
+            }else{
+                checkData = parseJSON(check);
+                const tokenId = typeof (requestProperties.headers.tokenid) === "string" && requestProperties.headers.tokenid.trim().length === 20 ? requestProperties.headers.tokenid : false;
+                // verify the user
+                tokenHandler._token.verify(tokenId,checkData.userPhone,(verifiedUser)=>{
+                    if(verifiedUser){
+                        callback(200,checkData);
+                    }else{
+                        callback(403,{
+                            error: "user is not valid !"
+                        })
+                    }
+                })
 
+            }
+        })
+    }else{
+        callback(500,{
+            error: "Invalid token id"
+        });
+    }
 }
 
 handler._check.post = (requestProperties, callback) => {
