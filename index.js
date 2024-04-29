@@ -3,20 +3,17 @@
 // Author : Md. Nafis Iqbal
 // Type : Ideal Server Creation using raw node
 
-const http = require("http");
-const { handleReqRes } = require('./helpers/handleReqRes');
-const environment = require('./helpers/environments');
 
+//dependencies
+const server = require('./lib/server');
+const server = require('./lib/worker');
 
+//module scaffolding
 const app = {};
 
 
+app.init = () => {
 
-app.createServer = () => {
-  const server = http.createServer(handleReqRes);
-  server.listen(environment.port, () => {
-    console.log(`Server is running on port ${environment.port} && mode : ${environment.envName}`);
-  });
-};
+}
 
-app.createServer();
+app.init();

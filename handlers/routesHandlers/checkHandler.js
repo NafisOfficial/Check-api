@@ -249,42 +249,42 @@ handler._check.delete = (requestProperties, callback) => {
                 // verify the user
                 tokenHandler._token.verify(tokenId, userPhone, (verifiedUser) => {
                     if (verifiedUser) {
-                        lib.delete('checks',checkId,(error)=>{
-                            if(!error){
-                                callback(500,{
+                        lib.delete('checks', checkId, (error) => {
+                            if (!error) {
+                                callback(500, {
                                     error: "failed to delete check !"
                                 })
-                            }else{
-                                lib.read('users',userPhone,(error,user)=>{
-                                    if(error && !user){
-                                        callback(500,{
+                            } else {
+                                lib.read('users', userPhone, (error, user) => {
+                                    if (error && !user) {
+                                        callback(500, {
                                             error: "there was an problem in server 4!"
                                         })
-                                    }else{
+                                    } else {
                                         const userData = parseJSON(user);
-                                        const userChecks = typeof(userData.checks) === 'object' && userData.checks instanceof Array ? true : false;
-                                        if(userChecks){
+                                        const userChecks = typeof (userData.checks) === 'object' && userData.checks instanceof Array ? true : false;
+                                        if (userChecks) {
                                             userChecksIndex = userData.checks.indexOf(checkId);
-                                            if(userChecksIndex>-1){
-                                                userData.checks.splice(userChecksIndex,1)
-                                                lib.update('users',userPhone,userData,(error)=>{
-                                                    if(error){
-                                                        callback(500,{
+                                            if (userChecksIndex > -1) {
+                                                userData.checks.splice(userChecksIndex, 1)
+                                                lib.update('users', userPhone, userData, (error) => {
+                                                    if (error) {
+                                                        callback(500, {
                                                             error: "there was an error in server 2!"
                                                         })
-                                                    }else{
-                                                        callback(500,{
+                                                    } else {
+                                                        callback(500, {
                                                             message: "successfully delete checks!"
                                                         })
                                                     }
                                                 })
-                                            }else{
-                                                callback(500,{
+                                            } else {
+                                                callback(500, {
                                                     error: "there was a problem in server 1"
                                                 })
                                             }
-                                        }else{
-                                            callback(500,{
+                                        } else {
+                                            callback(500, {
                                                 error: "there was an problem in server. 3"
                                             })
                                         }
