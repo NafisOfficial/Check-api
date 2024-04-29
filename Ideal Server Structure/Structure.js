@@ -1,7 +1,6 @@
 // Ideal Server Structure Using Raw node:
 
 const http = require("http");
-const { start } = require("repl");
 
 // app object - module scaffolding
 const app = {};
